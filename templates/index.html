@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Input Digit</title>
+    <script>
+        function submitForm(event) {
+            event.preventDefault(); 
+            
+            var num = document.getElementById("num").value;
+
+            fetch('/endpoint2', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ num: num })
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                fetchData(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+
+        function fetchData(uuid=null) {
+            fetch('/endpoint1', {
+                headers: {
+                    "X-Attribute": uuid
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("sold_num").textContent = data;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            fetchData();
+        })
+    </script>
+</head>
+<body>
+    <h1>Buy a Cookie!</h1>
+    Total sales: <label id="sold_num">Waiting data...</label>
+
+    <form onsubmit="submitForm(event)">
+        <label for="num">Number of cookies:</label>
+        <input type="text" id="num" name="num">
+        <br>
+        <input type="submit" value="Get it!">
+    </form>
+</body>
+</html>
